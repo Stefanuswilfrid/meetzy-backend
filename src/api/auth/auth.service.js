@@ -1,0 +1,74 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const authRepository = require("./auth.repository");
+const types = require("../../config/types.config");
+
+
+const register = async (userData) => {
+    try {
+        const userWithEmail = await authRepository.findUserByEmail(userData.email);
+        if (userWithEmail)
+            throw new Error("User Exists");
+        const role = userData.role;
+        const hashedPassword = bcrypt.hashSync(userData.password);
+        const userWithStatus = {
+          ...userData,
+          status:
+          role === types.role.user ? types.status.verified : types.status.pending,
+
+          password: hashedPassword,
+        };
+    
+        const newUser = await authRepository.createUser(userWithStatus);
+        if (!newUser)
+          throw new Error("Failed to register new account");
+    
+        if (role === types.role.user) return newUser;
+    
+        // Buat kirim notifikasi dibawah
+        // const notification = await notificationRepository.createNotification({
+        //   fromId: newUser.id,
+        //   receiver: types.notificationReceiver.admin,
+        //   message: `New EO Registration with ID ${newUser.id} and Email ${newUser.email}`,
+        //   toId: -999,
+        //   type: types.notification.eo,
+        // });
+    
+        // if (!notification)
+        //   throw utils.customError("400", "Failed to add notification");
+    
+        return newUser;
+      } catch (err) {
+        // console.log(err);
+        if (err.isCustomError) throw err;
+        throw new Error(err);
+      }
+}
+
+const login = async (incomingUser) => {
+  try {
+    const userData = await getUserByEmail(incomingUser.email);
+    
+    if (!bcrypt.compareSync(incomingUser.password, userData.password)) {
+      throw utils.customError("401", "Wrong password");
+    } else if (userData.role === "EO" && (!(userData.status === "VERIFIED"))) {
+      throw utils.customError("401", "Unverified EO");
+    } else {
+      const accessToken = jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET);
+      return accessToken;
+    }
+  } catch (err) {
+    if (err.isCustomError) throw err;
+    throw new Error(err);
+  }
+}
+
+
+const getUserByEmail = async (email) => {
+  const user = await authRepository.findUserByEmail(email);
+  if (!user) {
+    throw utils.customError("404", "User not found");
+  }
+  return user;
+};
+module.exports = { register,login ,getUserByEmail };
