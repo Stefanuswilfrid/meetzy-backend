@@ -22,6 +22,20 @@ enum Status {
   REJECTED
 }
 
+enum Category {
+  MUSIC
+  ART
+  SPORTS
+  CULINARY
+  TECH
+  LIFESTYLE
+  BUSINESS
+  EDUCATION
+  ENTERTAINMENT
+  CHARITY
+  OTHER
+}
+
 model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   email     String?  @unique
@@ -31,4 +45,24 @@ model User {
   status    Status
   role      Role
   createdAt DateTime @default(now())
+  Event     Event[]
+}
+
+model Event {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String   @db.ObjectId
+  title             String
+  description       String?
+  imageUrl          String
+  startDatetime     DateTime
+  endDatetime       DateTime
+  locationDetail    String?
+  ticketPrice       Int
+  capacity          Int
+  remainingCapacity Int
+  category          Category
+  city              String
+  status            Status
+  createdAt         DateTime @default(now())
+  user              User     @relation(fields: [userId], references: [id])
 }
