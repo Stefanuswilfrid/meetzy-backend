@@ -46,6 +46,18 @@ model User {
   role      Role
   createdAt DateTime @default(now())
   Event     Event[]
+  Ticket    Ticket[]
+}
+
+model Ticket {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  eventId   String
+  userId    String
+  quantity  Int
+  price     Int
+  createdAt DateTime @default(now())
+  event     Event    @relation(fields: [eventId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Event {
@@ -65,4 +77,5 @@ model Event {
   status            Status
   createdAt         DateTime @default(now())
   user              User     @relation(fields: [userId], references: [id])
+  Ticket            Ticket[]
 }

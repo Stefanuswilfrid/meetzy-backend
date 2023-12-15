@@ -1,5 +1,6 @@
 const eventRepository = require("./event.repository");
 const utils = require("../../utils/apiUtils");
+const ticketRepository = require("../../api/ticket/ticket.repository");
 
 const formatQueryParams = (queryParams) => {
     const where = {};
@@ -32,24 +33,61 @@ const formatQueryParams = (queryParams) => {
     const take = queryParams.page && queryParams.limit ? queryParams.limit : 30;
   
     return { where, sort, skip, take };
-  };
+};
+
+const separateEventsByTime = (eventsArray) => {
+  const currentTime = new Date();
+
+  const upcomingEvents = [];
+  const pastEvents = [];
+
+  eventsArray.forEach((ticket) => {
+    const eventEndDatetime = new Date(ticket.event.endDatetime);
+    if (eventEndDatetime < currentTime) {
+      pastEvents.push(ticket);
+    } else {
+      upcomingEvents.push(ticket);
+    }
+  });
+
+  return [upcomingEvents, pastEvents];
+};
 
 const getAllEvents = async (queryParams) => {
-    try {
-      const { where, sort, skip, take } = formatQueryParams(queryParams);
-      const events = await eventRepository.findAllEvents({
-        where,
-        sort,
-        skip,
-        take,
-      });
-      return events;
-    } catch (err) {
-      throw new Error(err);
-    }
-  };
+  try {
+    const { where, sort, skip, take } = formatQueryParams(queryParams);
+    const events = await eventRepository.findAllEvents({
+      where,
+      sort,
+      skip,
+      take,
+    });
+    return events;
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+const getMyEventAndTicket = async (userId) => {
+  try {
+    console.log("ui",userId)
+    const myEventAndTicket = await ticketRepository.findMyTicketAndEvents(
+      userId
+    );
+    // if (!myEventAndTicket) return myEventAndTicket;
+    const [upcomingEvents, pastEvents] = separateEventsByTime(myEventAndTicket);
+    return {
+      upcomingEvents: upcomingEvents,
+      pastEvents: pastEvents,
+    };
+  } catch (err) {
+    if (err.isCustomError) throw err;
+    throw new Error(err);
+  }
+};
 
 module.exports = {
   getAllEvents,
+  getMyEventAndTicket
 };
   

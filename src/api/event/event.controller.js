@@ -2,9 +2,12 @@ const express = require("express");
 const router = express.Router();
 const eventService = require("../event/event.service");
 const utils = require("../../utils/apiUtils");
+const validatorCatcher = require("../../middlewares/validatorCatcher");
+const authenticateToken = require("../../middlewares/authenticateToken");
 
 
-router.get("/", async (req, res) => {
+
+router.get("/",validatorCatcher, async (req, res) => {
     try {
       const sanitizeQuery = {
         category: req.query.category ? req.query.category : null,
@@ -35,6 +38,32 @@ router.get("/", async (req, res) => {
     }
   }
 );
+
+router.get("/my-events", authenticateToken, async (req, res) => {
+  try {
+    // const myEvents=
+    const userId = req.user.id;
+    const myEventAndTicket = await eventService.getMyEventAndTicket(userId);
+    return utils.apiResponse("200", req, res, {
+      status: true,
+      message: "Success fetching events",
+      body: myEventAndTicket,
+    });
+  } catch (err) {
+    if (err.isCustomError) {
+      return utils.apiResponse(err.statusCode, req, res, {
+        status: false,
+        message: err.message,
+      });
+    } else {
+      return utils.apiResponse("500", req, res, {
+        status: false,
+        message: err.message ? err.message : "Sorry Something Went Wrong",
+      });
+    }
+  }
+});
+
 
 module.exports = router;
 
