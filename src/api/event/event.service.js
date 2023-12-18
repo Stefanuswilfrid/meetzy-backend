@@ -70,7 +70,6 @@ const getAllEvents = async (queryParams) => {
 
 const getMyEventAndTicket = async (userId) => {
   try {
-    console.log("ui",userId)
     const myEventAndTicket = await ticketRepository.findMyTicketAndEvents(
       userId
     );

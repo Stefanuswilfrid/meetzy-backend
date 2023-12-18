@@ -1,7 +1,6 @@
 const prisma = require("../../db");
 
 const findMyTicketAndEvents = async (userId) => {
-    console.log("fm",userId)
     const ticketAndEvents = await prisma.ticket.findMany({
       where: {
         userId: userId,

@@ -1,7 +1,13 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const morgan = require("morgan");
+
+
+
+
 const authController = require("./api/auth/auth.controller");
 const eventController = require("./api/event/event.controller");
+const profileController = require("./api/profile/profile.controller");
 
 
 const cors = require("cors");
@@ -37,15 +43,18 @@ app.use(function (req, res, next) {
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(morgan("tiny"));
+
 
 app.use(cors(cors_options));
 
 app.get(`/`, (req,res) => {
-    res.send("oke");
+    res.send("Welcome to Meetzy's API");
 });
 
 app.use(`/api/auth`, authController);
 app.use(`/api/events`, eventController);
+app.use(`/api/profile`, profileController);
 
 
 
