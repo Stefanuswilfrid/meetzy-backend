@@ -65,5 +65,36 @@ router.get("/my-events", authenticateToken, async (req, res) => {
 });
 
 
+router.get("/:id", async (req, res) => {
+  try {
+    const eventId = req.params.id;
+    if (!eventId) {
+      return utils.apiResponse(400, req, res, {
+        status: false,
+        message: "Bad id parameter",
+      });
+    }
+    const event = await eventService.getEventById(eventId);
+    return utils.apiResponse(200, req, res, {
+      status: true,
+      message: "Fetched event",
+      body: event,
+    });
+  } catch (err) {
+    if (err.isCustomError) {
+      return utils.apiResponse(err.statusCode, req, res, {
+        status: false,
+        message: err.message,
+      });
+    } else {
+      return utils.apiResponse("500", req, res, {
+        status: false,
+        message: err.message ? err.message : "Sorry Something Error",
+      });
+    }
+  }
+});
+
+
 module.exports = router;
 

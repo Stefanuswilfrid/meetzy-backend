@@ -15,6 +15,19 @@ const findAllEvents = async ({ where, sort, skip, take }) => {
   return events;
 };
 
+const findEventById = async (id) => {
+  const event = await prisma.event.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      user: true
+    }
+  });
+  return event;
+};
+
 module.exports = {
     findAllEvents,
+    findEventById
 };

@@ -85,8 +85,17 @@ const getMyEventAndTicket = async (userId) => {
   }
 };
 
+const getEventById = async (id) => {
+  const event = await eventRepository.findEventById(id);
+  if (!event) {
+    throw utils.customError("404", "Event not found");
+  }
+  return event;
+};
+
 module.exports = {
   getAllEvents,
+  getEventById,
   getMyEventAndTicket
 };
   
