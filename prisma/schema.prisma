@@ -16,6 +16,17 @@ enum Role {
   EO
 }
 
+enum NotificationType {
+  TICKET_SOLD
+  NEW_EO
+  NEW_EVENT
+}
+
+enum NotificationReceiver {
+  EO
+  ADMIN
+}
+
 enum Status {
   PENDING
   VERIFIED
@@ -37,22 +48,24 @@ enum Category {
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  email     String?  @unique
-  fullname  String
-  age       Int?
-  password  String
-  status    Status
-  role      Role
-  createdAt DateTime @default(now())
-  Event     Event[]
-  Ticket    Ticket[]
+  id                    String         @id @default(auto()) @map("_id") @db.ObjectId
+  email                 String?        @unique
+  fullname              String
+  age                   Int?
+  password              String
+  status                Status
+  role                  Role
+  createdAt             DateTime       @default(now())
+  Event                 Event[]
+  Ticket                Ticket[]
+  notification_receiver Notification[] @relation("notification_receiver")
+  notification_sender   Notification[] @relation("notification_sender")
 }
 
 model Ticket {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  eventId   String
-  userId    String
+  eventId   String   @db.ObjectId
+  userId    String   @db.ObjectId
   quantity  Int
   price     Int
   createdAt DateTime @default(now())
@@ -78,4 +91,16 @@ model Event {
   createdAt         DateTime @default(now())
   user              User     @relation(fields: [userId], references: [id])
   Ticket            Ticket[]
+}
+
+model Notification {
+  id                         String               @id @default(auto()) @map("_id") @db.ObjectId
+  message                    String
+  type                       NotificationType
+  fromId                     String               @db.ObjectId
+  toId                       String               @db.ObjectId
+  receiver                   NotificationReceiver
+  createdAt                  DateTime             @default(now())
+  user_notification_receiver User                 @relation("notification_receiver", fields: [toId], references: [id])
+  user_notification_sender   User                 @relation("notification_sender", fields: [fromId], references: [id])
 }

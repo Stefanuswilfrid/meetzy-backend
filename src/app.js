@@ -8,6 +8,8 @@ const morgan = require("morgan");
 const authController = require("./api/auth/auth.controller");
 const eventController = require("./api/event/event.controller");
 const profileController = require("./api/profile/profile.controller");
+const ticketController = require("./api/ticket/ticket.controller");
+
 
 
 const cors = require("cors");
@@ -55,6 +57,7 @@ app.get(`/`, (req,res) => {
 app.use(`/api/auth`, authController);
 app.use(`/api/events`, eventController);
 app.use(`/api/profile`, profileController);
+app.use(`/api/tickets`, ticketController);
 
 
 
