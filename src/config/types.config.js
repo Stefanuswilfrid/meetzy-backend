@@ -34,12 +34,19 @@ const status = {
     charity: "CHARITY",
     other: "OTHER",
   };
-  
+  const eventCity = {
+    bandung: "BANDUNG",
+    jakarta: "JAKARTA",
+    surabaya: "SURABAYA",
+    other: "OTHER",
+  };
+
   module.exports = {
     status,
     role,
     notification,
     eventCategory,
+    eventCity,
     notificationReceiver,
   };
   

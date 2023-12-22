@@ -15,7 +15,6 @@ router.post("/register",async (req, res) => {
         role: req.body.role,
         age: req.body.age ? req.body.age : null,
         };
-        console.log("test")
         const newUser = await authService.register(sanitizeUser);
         return utils.apiResponse(201, req, res, {
           status: true,
@@ -46,7 +45,6 @@ try {
     email: req.body.email,
     password: req.body.password,
   };
-  console.log("login")
   const accessToken = await authService.login(sanitizeUser);
 
   return utils.apiResponse(200, req, res, {

@@ -2,13 +2,14 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authRepository = require("./auth.repository");
 const types = require("../../config/types.config");
+const utils = require("../../utils/apiUtils");
 
 
 const register = async (userData) => {
     try {
         const userWithEmail = await authRepository.findUserByEmail(userData.email);
         if (userWithEmail)
-            throw new Error("User Exists");
+          throw utils.customError("400", "User with that email already exist");
         const role = userData.role;
         const hashedPassword = bcrypt.hashSync(userData.password);
         const userWithStatus = {
@@ -39,7 +40,6 @@ const register = async (userData) => {
     
         return newUser;
       } catch (err) {
-        // console.log(err);
         if (err.isCustomError) throw err;
         throw new Error(err);
       }
