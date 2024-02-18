@@ -1,8 +1,10 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
-
+const swagger_options = require("./config/swagger.config");
 
 
 const authController = require("./api/auth/auth.controller");
@@ -17,9 +19,19 @@ const cors = require("cors");
 
 dotenv.config();
 
+
 const cors_options = require("./config/cors.config");
 
 const app = express();
+const specs = swaggerJsdoc(swagger_options);
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, {
+    explorer: true,
+  })
+);
 
 
 app.use(function (req, res, next) {

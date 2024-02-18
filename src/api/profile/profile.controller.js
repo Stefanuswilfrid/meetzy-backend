@@ -4,6 +4,36 @@ const utils = require("../../utils/apiUtils");
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /profile:
+ *   get:
+ *     summary: Get user profile using bearer token
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Successful user profile retrieval
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiResponse'
+ *             example:
+ *               header:
+ *                 time_request: "2023-08-26T14:19:39.807Z"
+ *               body:
+ *                 status: true
+ *                 message: successfully got user info from token
+ *                 body:
+ *                   id: 2
+ *                   email: sasuke@gmail.com
+ *                   password: "$2a$10$bA1Jav54RBtC1K2YlNKbn.8Zf5v7//ziuJlYV8Gk/aopmUwnDWHNu"
+ *                   fullname: Sasuke Uchiha
+ *                   role: USER
+ *                   status: PENDING
+ *                   age: 18
+ */
 
 router.get("/", authenticateToken, async (req, res) => {
     try {
