@@ -11,3 +11,14 @@
 ## Tech Stack
 **Main:** Express, Node.js,  Prisma, MongoDB , Jest , Supertest
 
+## Running Tests
+
+To run tests, run the following command
+
+```bash
+  npm run test
+```
+
+## Documentation
+
+Locally you can go to localhost:3000/api-docs*** after running the server for api documentation.
